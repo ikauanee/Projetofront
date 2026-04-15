@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Vitalis | Sistema de Gestão Clínica</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f9;
+            color: #1a2c3e;
+        }
+
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #0d6b7c;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0f2b3b;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: #5b7a9a;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 28px;
+        }
+
+        .stat-mini {
+            text-align: right;
+        }
+
+        .stat-mini .number {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #0d6b7c;
+        }
+
+        .stat-mini .label {
+            font-size: 0.7rem;
+            color: #6c86a3;
+        }
+
+        .app-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 28px 32px;
+        }
+
+        .tabs-container {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e9edf2;
+            overflow: hidden;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 4px;
+            background: #f8fafd;
+            border-bottom: 1px solid #e9edf2;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 16px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #5b7a9a;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: #0d6b7c;
+        }
+
+        .tab-btn.active {
+            color: #0d6b7c;
+            border-bottom-color: #0d6b7c;
+        }
+
+        .tab-content {
+            padding: 28px;
+            background: white;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-pane.active-pane {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #eef2f8;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #eef2f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e4663;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 20px 24px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #5b7a9a;
+        }
+
+        input, select, textarea {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #dce3ec;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0d6b7c;
+            box-shadow: 0 0 0 3px rgba(13,107,124,0.1);
+        }
+
+        button {
+            background: #0d6b7c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #0a5563;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbdde9;
+            color: #2c5a74;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+        }
+
+        .btn-small {
+            padding: 6px 14px;
+            font-size: 0.7rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 10px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #f0f3f8;
+        }
+
+        th {
+            color: #5b7a9a;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .badge-status {
+            background: #e6f7f0;
+            color: #1e7b4a;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .action-icon {
+            color: #8ba3c2;
+            margin: 0 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .action-icon:hover {
+            color: #0d6b7c;
+        }
+
+        .historico-item {
+            background: #fafcff;
+            border-left: 3px solid #0d6b7c;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .historico-data {
+            color: #5b7a9a;
+            font-size: 0.7rem;
+            margin-bottom: 6px;
+        }
+
+        .chat-container {
+            height: 520px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #f9fbfd;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+            animation: slideIn 0.2s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            background: #eef2f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #1e4663;
+        }
+
+        .message-avatar.bot {
+            background: #0d6b7c;
+            color: white;
+        }
+
+        .message-content {
+            flex: 1;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .message.user .message-content {
+            background: #0d6b7c;
+            color: white;
+        }
+
+        .message-author {
+            font-weight: 600;
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .message-time {
+            font-size: 0.6rem;
+            margin-top: 4px;
+            opacity: 0.6;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 12px;
+            padding: 8px 0;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            border-radius: 40px;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 32px;
+            color: #8ba3c2;
+            font-size: 0.8rem;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 16px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: #8ba3c2;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+            .app-container {
+                padding: 16px;
+            }
+            .tab-content {
+                padding: 16px;
+            }
+            .tabs-header {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="top-bar">
+    <div class="logo-area">
+        <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+        <div class="logo-text">
+            <h2>Hospital Vitalis</h2>
+            <p>Sistema de Gestão Clínica</p>
+        </div>
+    </div>
+    <div class="header-stats">
+        <div class="stat-mini"><div class="number" id="statMedicos">0</div><div class="label">Médicos</div></div>
+        <div class="stat-mini"><div class="number" id="statPacientes">0</div><div class="label">Pacientes</div></div>
+        <div class="stat-mini"><div class="number" id="statConsultas">0</div><div class="label">Consultas</div></div>
+    </div>
+</div>
+
+<div class="app-container">
+    <div class="tabs-container">
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="agenda"><i class="fas fa-calendar-alt"></i> Agenda</button>
+            <button class="tab-btn" data-tab="pacientes"><i class="fas fa-users"></i> Pacientes</button>
+            <button class="tab-btn" data-tab="medicos"><i class="fas fa-user-md"></i> Médicos</button>
+            <button class="tab-btn" data-tab="prontuario"><i class="fas fa-notes-medical"></i> Prontuário</button>
+            <button class="tab-btn" data-tab="chat"><i class="fas fa-comments"></i> Equipe Médica</button>
+        </div>
+        <div class="tab-content">
+            <div id="agenda" class="tab-pane active-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-calendar-plus"></i> Nova Consulta</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="input-field">
+                                <label>Médico</label>
+                                <select id="selectMedico">
+                                    <option value="">Selecione</option>
+                                </select>
+                            </div>
+                            <div class="input-field">
+                                <label>Paciente</label>
+                                <select id="selectPaciente">
+                                    <option value="">Selecione</option>
+                                </select>
+                            </div>
+                            <div class="input-field">
+                                <label>Data e Hora</label>
+                                <input type="datetime-local" id="consultaDataHora">
+                            </div>
+                            <div class="input-field">
+                                <label>Motivo / Observação</label>
+                                <input type="text" id="consultaObs" placeholder="Ex: Consulta de rotina">
+                            </div>
+                        </div>
+                        <button id="btnAgendarConsulta"><i class="fas fa-check"></i> Agendar Consulta</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-stethoscope"></i> Próximas Consultas</h3>
+                        <span class="badge-status">Agendamentos</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="listaConsultas" style="max-height: 400px; overflow-y: auto;">
+                            <div class="empty-msg">Nenhuma consulta marcada</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pacientes" class="tab-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-plus"></i> Cadastrar Paciente</h3>
+                        <button id="btnAddPaciente" class="btn-small btn-outline"><i class="fas fa-plus"></i> Novo Paciente</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-wrapper">
+                            <table style="width:100%">
+                                <thead><tr><th>ID</th><th>Nome</th><th>Telefone</th><th>Data Cadastro</th><th>Ações</th></tr></thead>
+                                <tbody id="listaPacientesBody"><tr><td colspan="5" class="empty-msg">Carregando...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="medicos" class="tab-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-md"></i> Corpo Clínico</h3>
+                        <button id="btnAddMedico" class="btn-small btn-outline"><i class="fas fa-plus"></i> Novo Médico</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-wrapper">
+                            <table style="width:100%">
+                                <thead><tr><th>ID</th><th>Nome</th><th>Especialidade</th><th>CRM</th><th>Ações</th></tr></thead>
+                                <tbody id="listaMedicosBody"><tr><td colspan="5" class="empty-msg">Nenhum médico cadastrado</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="prontuario" class="tab-pane">
+                <div class="two-columns">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-circle"></i> Selecione o Paciente</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-field" style="margin-bottom: 16px;">
+                                <label>Paciente</label>
+                                <select id="selectPacienteHistorico">
+                                    <option value="">Escolha um paciente</option>
+                                </select>
+                            </div>
+                            <button id="btnVerHistorico" class="btn-outline btn-small"><i class="fas fa-search"></i> Carregar Histórico</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-notes-medical"></i> Histórico Médico</h3>
+                            <button id="btnNovoHistorico" class="btn-small btn-outline"><i class="fas fa-plus"></i> Novo Registro</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="historicoContainer" style="max-height: 400px; overflow-y: auto;">
+                                <div class="empty-msg">Selecione um paciente para visualizar o histórico</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat" class="tab-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-comments"></i> Comunicação com Equipe Médica</h3>
+                        <span class="badge-status"><i class="fas fa-brain"></i> IA Contextual</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chat-container">
+                            <div id="chatMessages" class="chat-messages"></div>
+                            <div class="chat-input-area">
+                                <input type="text" id="chatInput" placeholder="Digite sua mensagem...">
+                                <button id="btnEnviarMensagem"><i class="fas fa-paper-plane"></i> Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PARA HISTÓRICO MÉDICO -->
+<div id="modalHistorico" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
+    <div style="background:white; max-width:500px; width:90%; border-radius:24px; padding:28px;">
+        <h3 style="margin-bottom:20px;">Registrar Evolução Médica</h3>
+        <div class="input-field" style="margin-bottom:16px;">
+            <label>Paciente</label>
+            <select id="modalPacienteSelect"></select>
+        </div>
+        <div class="input-field" style="margin-bottom:16px;">
+            <label>Data do Registro</label>
+            <input type="date" id="modalDataHistorico">
+        </div>
+        <div class="input-field" style="margin-bottom:20px;">
+            <label>Descrição / Diagnóstico</label>
+            <textarea rows="4" id="modalDescricao" placeholder="Descreva o atendimento, sintomas, prescrições..."></textarea>
+        </div>
+        <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button id="btnFecharModal" class="btn-outline">Cancelar</button>
+            <button id="btnSalvarHistorico">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== DADOS ==========
+    let medicos = [
+        { id: 1, nome: "Dra. Camila Rocha", especialidade: "Cardiologia", crm: "CRM-SP 45821" },
+        { id: 2, nome: "Dr. Felipe Andrade", especialidade: "Clínica Geral", crm: "CRM-RJ 33214" },
+        { id: 3, nome: "Dra. Luciana Menezes", especialidade: "Pediatria", crm: "CRM-MG 12987" }
+    ];
+    
+    let pacientes = [
+        { id: 1, nome: "Maria Oliveira", telefone: "(11) 98765-4321", dataCadastro: "2025-01-15" },
+        { id: 2, nome: "Carlos Eduardo Silva", telefone: "(21) 97654-1234", dataCadastro: "2025-02-20" },
+        { id: 3, nome: "Ana Beatriz Souza", telefone: "(31) 99887-6655", dataCadastro: "2025-03-10" }
+    ];
+    
+    let consultas = [
+        { id: 1, medicoId: 1, pacienteId: 1, dataHora: "2025-05-20T10:00", observacao: "Check-up anual" },
+        { id: 2, medicoId: 2, pacienteId: 2, dataHora: "2025-05-22T14:30", observacao: "Dor no peito" }
+    ];
+    
+    let historicoMedico = [
+        { id: 1, pacienteId: 1, data: "2025-04-10", descricao: "Hipertensão controlada. Prescrito Losartana 50mg." },
+        { id: 2, pacienteId: 1, data: "2025-04-20", descricao: "Retorno: PA estável. Manter medicação." },
+        { id: 3, pacienteId: 2, data: "2025-05-01", descricao: "Exames solicitados: hemograma, glicemia, colesterol." }
+    ];
+    
+    let mensagensChat = [
+        { id: 1, autor: "Dra. Camila Rocha", texto: "Bom dia equipe! Alguém pode verificar o resultado do ecocardiograma?", hora: "09:30", isBot: false },
+        { id: 2, autor: "Assistente IA Vitalis", texto: "Olá Dra. Camila! Vou verificar o resultado do ecocardiograma para você. Enquanto isso, posso ajudar com mais alguma informação sobre os pacientes ou exames?", hora: "09:31", isBot: true }
+    ];
+    
+    let nextConsultaId = 3;
+    let nextHistoricoId = 4;
+    let nextPacienteId = 4;
+    let nextMedicoId = 4;
+    let nextMensagemId = 3;
+    
+    // ========== MEMÓRIA DE CONVERSA ==========
+    let contextoConversa = {
+        ultimoPacienteMencionado: null,
+        ultimoMedicoMencionado: null,
+        aguardandoResposta: false
+    };
+    
+    // ========== IA INTELIGENTE COM CONTEXTO ==========
+    function getBotResponse(userMessage, historicoConversa) {
+        const msg = userMessage.toLowerCase().trim();
+        
+        // Verificar se menciona algum paciente específico
+        let pacienteMencionado = null;
+        for (let p of pacientes) {
+            if (msg.includes(p.nome.toLowerCase())) {
+                pacienteMencionado = p;
+                contextoConversa.ultimoPacienteMencionado = p;
+                break;
+            }
+        }
+        
+        // Verificar se menciona algum médico específico
+        let medicoMencionado = null;
+        for (let m of medicos) {
+            if (msg.includes(m.nome.toLowerCase()) || msg.includes(m.especialidade.toLowerCase())) {
+                medicoMencionado = m;
+                contextoConversa.ultimoMedicoMencionado = m;
+                break;
+            }
+        }
+        
+        // Verificar pronomes referentes ao último paciente mencionado
+        const pronomesPaciente = ['ele', 'ela', 'desse paciente', 'desta paciente', 'dele', 'dela', 'sobre ele', 'sobre ela'];
+        if (contextoConversa.ultimoPacienteMencionado && pronomesPaciente.some(p => msg.includes(p))) {
+            pacienteMencionado = contextoConversa.ultimoPacienteMencionado;
+        }
+        
+        // Verificar pronomes referentes ao último médico mencionado
+        const pronomesMedico = ['ele', 'doutor', 'essa médica', 'esse médico', 'dele'];
+        if (contextoConversa.ultimoMedicoMencionado && pronomesMedico.some(p => msg.includes(p))) {
+            medicoMencionado = contextoConversa.ultimoMedicoMencionado;
+        }
+        
+        // ===== RESPOSTAS CONTEXTUAIS =====
+        
+        // 1. Se perguntou sobre um paciente específico
+        if (pacienteMencionado) {
+            const consultasPaciente = consultas.filter(c => c.pacienteId === pacienteMencionado.id);
+            const historicos = historicoMedico.filter(h => h.pacienteId === pacienteMencionado.id);
+            
+            let resposta = `Sobre ${pacienteMencionado.nome}:\n\n📋 Telefone: ${pacienteMencionado.telefone}\n📅 Cadastro: ${pacienteMencionado.dataCadastro}\n🩺 Consultas agendadas: ${consultasPaciente.length}\n📝 Registros no prontuário: ${historicos.length}`;
+            
+            if (historicos.length > 0) {
+                const ultimo = historicos[0];
+                resposta += `\n\n📌 Último registro (${new Date(ultimo.data).toLocaleDateString('pt-BR')}): ${ultimo.descricao.substring(0, 100)}${ultimo.descricao.length > 100 ? '...' : ''}`;
+            }
+            
+            resposta += `\n\nGostaria de saber mais detalhes sobre este paciente? Posso ajudar a acessar o prontuário completo na aba específica.`;
+            return resposta;
+        }
+        
+        // 2. Se perguntou sobre um médico específico
+        if (medicoMencionado) {
+            const consultasMedico = consultas.filter(c => c.medicoId === medicoMencionado.id);
+            return `Dr(a). ${medicoMencionado.nome} é especialista em ${medicoMencionado.especialidade}. CRM: ${medicoMencionado.crm}. Atualmente possui ${consultasMedico.length} consulta(s) agendada(s). Deseja agendar uma consulta com este profissional?`;
+        }
+        
+        // 3. Saudação
+        if (msg.match(/^(oi|olá|ola|bom dia|boa tarde|boa noite|opa|hey|hi|hello)/i)) {
+            return "Olá! Sou o assistente do Hospital Vitalis. Como posso ajudar você hoje? Posso fornecer informações sobre médicos, pacientes, agendamentos ou histórico médico. O que você precisa?";
+        }
+        
+        // 4. Agendamento de consulta
+        if (msg.includes('agendar') || (msg.includes('consulta') && (msg.includes('marcar') || msg.includes('quero')))) {
+            if (medicoMencionado) {
+                return `Ótimo! Para agendar uma consulta com ${medicoMencionado.nome}, vá até a aba "Agenda", selecione o médico, escolha um paciente e defina a data/horário. Preciso de ajuda para encontrar um horário disponível?`;
+            }
+            return "Posso ajudar com agendamentos! Acesse a aba 'Agenda' para marcar uma consulta. Lá você pode escolher médico, paciente e horário. Deseja saber quais médicos estão disponíveis?";
+        }
+        
+        // 5. Listar médicos
+        if (msg.includes('médicos') || msg.includes('doutores') || msg.includes('equipe médica')) {
+            const lista = medicos.map(m => `👨‍⚕️ ${m.nome} - ${m.especialidade}`).join('\n');
+            return `Nossa equipe médica conta com:\n\n${lista}\n\nQual deles você gostaria de saber mais?`;
+        }
+        
+        // 6. Listar pacientes
+        if (msg.includes('pacientes cadastrados') || (msg.includes('pacientes') && msg.includes('lista'))) {
+            const lista = pacientes.map(p => `👤 ${p.nome}`).join('\n');
+            return `Pacientes cadastrados no sistema:\n\n${lista}\n\nGostaria de informações sobre algum paciente específico? Basta me dizer o nome.`;
+        }
+        
+        // 7. Histórico/prontuário
+        if (msg.includes('histórico') || msg.includes('prontuário') || msg.includes('registro médico')) {
+            if (pacienteMencionado) {
+                const historicos = historicoMedico.filter(h => h.pacienteId === pacienteMencionado.id);
+                if (historicos.length > 0) {
+                    let resposta = `📋 Histórico médico de ${pacienteMencionado.nome}:\n\n`;
+                    historicos.slice(0, 3).forEach(h => {
+                        resposta += `📅 ${new Date(h.data).toLocaleDateString('pt-BR')}: ${h.descricao}\n\n`;
+                    });
+                    if (historicos.length > 3) resposta += `... e mais ${historicos.length - 3} registro(s). Acesse a aba 'Prontuário' para ver todos.`;
+                    return resposta;
+                }
+                return `${pacienteMencionado.nome} ainda não possui registros no prontuário. Deseja adicionar um novo registro médico?`;
+            }
+            return "Para acessar o histórico médico, vá até a aba 'Prontuário' e selecione um paciente. Lá você poderá ver todas as evoluções e adicionar novos registros.";
+        }
+        
+        // 8. Próximas consultas
+        if (msg.includes('próximas consultas') || msg.includes('agendamentos') || msg.includes('consultas marcadas')) {
+            if (consultas.length === 0) {
+                return "Não há consultas agendadas no momento. Deseja marcar uma consulta?";
+            }
+            const proximas = consultas.slice(0, 5).map(c => {
+                const medico = medicos.find(m => m.id === c.medicoId);
+                const paciente = pacientes.find(p => p.id === c.pacienteId);
+                return `📅 ${new Date(c.dataHora).toLocaleString('pt-BR')} - ${paciente?.nome} com ${medico?.nome}`;
+            }).join('\n');
+            return `Próximas consultas agendadas:\n\n${proximas}\n\nTotal: ${consultas.length} consulta(s).`;
+        }
+        
+        // 9. Remédios/medicação
+        if (msg.includes('remédio') || msg.includes('medicamento') || msg.includes('receita') || msg.includes('prescrição')) {
+            return "⚠️ Informações sobre medicamentos e prescrições devem ser fornecidas exclusivamente por médicos durante a consulta presencial ou teleconsulta. Recomendo agendar uma avaliação médica para receber a orientação adequada. Posso ajudar a marcar uma consulta?";
+        }
+        
+        // 10. Emergência
+        if (msg.includes('emergência') || msg.includes('urgente') || msg.includes('socorro') || msg.includes('pronto-socorro')) {
+            return "🚨 ATENÇÃO: Em caso de emergência médica, dirija-se IMEDIATAMENTE ao pronto-socorro mais próximo ou ligue 192 (SAMU). Este canal é para comunicação administrativa e agendamentos.";
+        }
+        
+        // 11. Ajuda
+        if (msg.includes('ajuda') || msg.includes('o que você faz') || msg.includes('comandos') || msg.includes('pode fazer')) {
+            return "📋 **O que eu posso fazer:**\n\n✅ Informar sobre médicos e especialidades\n✅ Mostrar lista de pacientes cadastrados\n✅ Dar detalhes sobre um paciente específico\n✅ Ver próximas consultas agendadas\n✅ Acessar histórico médico de pacientes\n✅ Orientar sobre como agendar consultas\n✅ Auxiliar com cadastros\n\n**Como usar:** Basta perguntar normalmente! Ex: 'Quem é Carlos Eduardo Silva?' ou 'Me mostre os médicos cardiologistas'";
+        }
+        
+        // 12. Agradecimento
+        if (msg.includes('obrigado') || msg.includes('obrigada') || msg.includes('valeu') || msg.includes('gratidão')) {
+            return "Por nada! Fico feliz em ajudar. Estou sempre aqui para auxiliar a equipe do Hospital Vitalis. Continue perguntando o que precisar! 🏥✨";
+        }
+        
+        // 13. Resposta padrão com contexto
+        if (contextoConversa.ultimoPacienteMencionado && !pacienteMencionado) {
+            return `Você perguntou sobre ${contextoConversa.ultimoPacienteMencionado.nome} anteriormente. Gostaria de saber mais detalhes sobre este paciente, como histórico médico ou consultas?`;
+        }
+        
+        if (contextoConversa.ultimoMedicoMencionado && !medicoMencionado) {
+            return `Falamos sobre ${contextoConversa.ultimoMedicoMencionado.nome} há pouco. Deseja agendar uma consulta ou saber mais sobre sua agenda?`;
+        }
+        
+        return "Entendi sua mensagem. Estou aqui para ajudar com informações sobre médicos, pacientes, agendamentos e histórico médico. Você pode me perguntar coisas como:\n\n• 'Quais médicos temos?'\n• 'Me fale sobre Maria Oliveira'\n• 'Próximas consultas'\n• 'Histórico do Carlos'\n\nComo posso ajudar você agora?";
+    }
+    
+    function showTypingIndicator() {
+        const container = document.getElementById("chatMessages");
+        const typingDiv = document.createElement("div");
+        typingDiv.id = "typingIndicator";
+        typingDiv.className = "message";
+        typingDiv.innerHTML = `
+            <div class="message-avatar bot"><i class="fas fa-robot"></i></div>
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        `;
+        container.appendChild(typingDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+        const indicator = document.getElementById("typingIndicator");
+        if (indicator) indicator.remove();
+    }
+    
+    function addBotMessage(texto) {
+        const agora = new Date();
+        const hora = `${agora.getHours().toString().padStart(2,'0')}:${agora.getMinutes().toString().padStart(2,'0')}`;
+        mensagensChat.push({
+            id: nextMensagemId++,
+            autor: "Assistente IA Vitalis",
+            texto: texto,
+            hora: hora,
+            isBot: true
+        });
+        renderChat();
+    }
+    
+    function addUserMessage(texto) {
+        const agora = new Date();
+        const hora = `${agora.getHours().toString().padStart(2,'0')}:${agora.getMinutes().toString().padStart(2,'0')}`;
+        mensagensChat.push({
+            id: nextMensagemId++,
+            autor: "Você",
+            texto: texto,
+            hora: hora,
+            isBot: false
+        });
+        renderChat();
+        
+        // Mostrar indicador de digitação
+        showTypingIndicator();
+        
+        // Simular tempo de processamento da IA
+        setTimeout(() => {
+            removeTypingIndicator();
+            const resposta = getBotResponse(texto, mensagensChat);
+            addBotMessage(resposta);
+        }, 600 + Math.random() * 400);
+    }
+    
+    function renderChat() {
+        const container = document.getElementById("chatMessages");
+        if (!container) return;
+        if (mensagensChat.length === 0) {
+            container.innerHTML = '<div class="empty-msg">Nenhuma mensagem. Envie uma mensagem para a equipe médica.</div>';
+            return;
+        }
+        const allMessages = [...mensagensChat];
+        container.innerHTML = "";
+        allMessages.forEach(msg => {
+            const div = document.createElement("div");
+            div.className = `message ${msg.autor === "Você" ? 'user' : ''}`;
+            const avatarContent = msg.isBot ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user-md"></i>';
+            div.innerHTML = `
+                <div class="message-avatar ${msg.isBot ? 'bot' : ''}">${avatarContent}</div>
+                <div class="message-content">
+                    <div class="message-author">${msg.autor}</div>
+                    <div style="white-space: pre-line;">${msg.texto}</div>
+                    <div class="message-time">${msg.hora}</div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    // ========== FUNÇÕES DE GESTÃO ==========
+    function renderAll() {
+        renderMedicos();
+        renderPacientes();
+        renderConsultas();
+        renderHistorico();
+        atualizarStats();
+        popularSelects();
+    }
+    
+    function renderMedicos() {
+        const tbody = document.getElementById("listaMedicosBody");
+        if (!tbody) return;
+        if (medicos.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">Nenhum médico cadastrado</td></tr>'; return; }
+        tbody.innerHTML = "";
+        medicos.forEach(m => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = m.id;
+            row.insertCell(1).innerHTML = `<strong>${m.nome}</strong>`;
+            row.insertCell(2).innerText = m.especialidade;
+            row.insertCell(3).innerText = m.crm;
+            const acoes = row.insertCell(4);
+            acoes.innerHTML = `<i class="fas fa-trash-alt action-icon" data-id="${m.id}" data-type="medico" title="Remover médico"></i>`;
+        });
+        document.querySelectorAll('#listaMedicosBody .fa-trash-alt').forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                const id = parseInt(icon.getAttribute('data-id'));
+                if(confirm("Remover médico também cancelará suas consultas?")) {
+                    consultas = consultas.filter(c => c.medicoId !== id);
+                    medicos = medicos.filter(m => m.id !== id);
+                    renderAll();
+                }
+            });
+        });
+    }
+    
+    function renderPacientes() {
+        const tbody = document.getElementById("listaPacientesBody");
+        if (!tbody) return;
+        if (pacientes.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">Nenhum paciente cadastrado</td></tr>'; return; }
+        tbody.innerHTML = "";
+        pacientes.forEach(p => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = p.id;
+            row.insertCell(1).innerHTML = `<i class="fas fa-user-circle"></i> ${p.nome}`;
+            row.insertCell(2).innerText = p.telefone || '—';
+            row.insertCell(3).innerText = p.dataCadastro || '—';
+            const acoes = row.insertCell(4);
+            acoes.innerHTML = `<i class="fas fa-trash-alt action-icon" data-id="${p.id}" data-type="paciente" title="Remover paciente"></i>`;
+        });
+        document.querySelectorAll('#listaPacientesBody .fa-trash-alt').forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                const id = parseInt(icon.getAttribute('data-id'));
+                if(confirm("Remover paciente também apagará consultas e histórico?")) {
+                    consultas = consultas.filter(c => c.pacienteId !== id);
+                    historicoMedico = historicoMedico.filter(h => h.pacienteId !== id);
+                    pacientes = pacientes.filter(p => p.id !== id);
+                    renderAll();
+                }
+            });
+        });
+    }
+    
+    function renderConsultas() {
+        const container = document.getElementById("listaConsultas");
+        if (!container) return;
+        if (consultas.length === 0) { container.innerHTML = '<div class="empty-msg">Nenhuma consulta agendada</div>'; return; }
+        const ordenadas = [...consultas].sort((a,b) => new Date(a.dataHora) - new Date(b.dataHora));
+        container.innerHTML = "";
+        ordenadas.forEach(cons => {
+            const medico = medicos.find(m => m.id === cons.medicoId);
+            const paciente = pacientes.find(p => p.id === cons.pacienteId);
+            const div = document.createElement("div");
+            div.className = "historico-item";
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <strong><i class="fas fa-user-md"></i> ${medico?.nome || 'Removido'}</strong>
+                    <strong><i class="fas fa-user"></i> ${paciente?.nome || 'Removido'}</strong>
+                    <span><i class="far fa-calendar"></i> ${new Date(cons.dataHora).toLocaleString('pt-BR')}</span>
+                </div>
+                <div style="margin:6px 0 0; font-size:0.75rem;">📝 ${cons.observacao || 'Sem observações'}</div>
+                <div style="text-align:right; margin-top:8px;"><button class="btn-small btn-outline cancelarConsulta" data-id="${cons.id}">Cancelar</button></div>
+            `;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('.cancelarConsulta').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                if(confirm("Cancelar esta consulta?")) {
+                    consultas = consultas.filter(c => c.id !== id);
+                    renderAll();
+                }
+            });
+        });
+    }
+    
+    let pacienteHistoricoAtual = null;
+    
+    function renderHistorico() {
+        const container = document.getElementById("historicoContainer");
+        if (!container) return;
+        if (!pacienteHistoricoAtual) {
+            container.innerHTML = '<div class="empty-msg">Selecione um paciente para visualizar o histórico médico</div>';
+            return;
+        }
+        const paciente = pacientes.find(p => p.id === pacienteHistoricoAtual);
+        const historicos = historicoMedico.filter(h => h.pacienteId === pacienteHistoricoAtual).sort((a,b) => new Date(b.data) - new Date(a.data));
+        if (historicos.length === 0) {
+            container.innerHTML = `<div class="empty-msg"><strong>${paciente?.nome}</strong> - Nenhum registro de histórico encontrado.</div>`;
+            return;
+        }
+        container.innerHTML = `<div style="margin-bottom:16px; font-weight:600; padding:8px; background:#eef2f9; border-radius:12px;"><i class="fas fa-address-card"></i> Paciente: ${paciente?.nome}</div>`;
+        historicos.forEach(h => {
+            const item = document.createElement("div");
+            item.className = "historico-item";
+            item.innerHTML = `<div class="historico-data"><i class="far fa-calendar-alt"></i> ${new Date(h.data).toLocaleDateString('pt-BR')}</div>
+                              <div>${h.descricao}</div>`;
+            container.appendChild(item);
+        });
+    }
+    
+    function salvarNovoHistorico(pacienteId, data, descricao) {
+        if (!pacienteId || !data || !descricao.trim()) return false;
+        historicoMedico.push({
+            id: nextHistoricoId++,
+            pacienteId: parseInt(pacienteId),
+            data: data,
+            descricao: descricao
+        });
+        if (pacienteHistoricoAtual === parseInt(pacienteId)) renderHistorico();
+        return true;
+    }
+    
+    function agendarConsulta() {
+        const medicoId = parseInt(document.getElementById("selectMedico").value);
+        const pacienteId = parseInt(document.getElementById("selectPaciente").value);
+        const dataHora = document.getElementById("consultaDataHora").value;
+        const obs = document.getElementById("consultaObs").value.trim();
+        if (!medicoId || !pacienteId || !dataHora) {
+            alert("Preencha todos os campos obrigatórios.");
+            return;
+        }
+        const conflito = consultas.some(c => c.medicoId === medicoId && c.dataHora === dataHora);
+        if (conflito) { alert("Este médico já possui consulta nesse horário."); return; }
+        consultas.push({ id: nextConsultaId++, medicoId, pacienteId, dataHora, observacao: obs });
+        document.getElementById("consultaDataHora").value = "";
+        document.getElementById("consultaObs").value = "";
+        renderAll();
+        alert("✅ Consulta agendada com sucesso!");
+    }
+    
+    function popularSelects() {
+        const selectMed = document.getElementById("selectMedico");
+        const selectPac = document.getElementById("selectPaciente");
+        const selectHist = document.getElementById("selectPacienteHistorico");
+        if (selectMed) {
+            selectMed.innerHTML = '<option value="">Selecione</option>';
+            medicos.forEach(m => selectMed.innerHTML += `<option value="${m.id}">${m.nome} (${m.especialidade})</option>`);
+        }
+        if (selectPac) {
+            selectPac.innerHTML = '<option value="">Selecione</option>';
+            pacientes.forEach(p => selectPac.innerHTML += `<option value="${p.id}">${p.nome}</option>`);
+        }
+        if (selectHist) {
+            selectHist.innerHTML = '<option value="">Escolha um paciente</option>';
+            pacientes.forEach(p => selectHist.innerHTML += `<option value="${p.id}">${p.nome}</option>`);
+        }
+        const modalSelect = document.getElementById("modalPacienteSelect");
+        if (modalSelect) {
+            modalSelect.innerHTML = '<option value="">Selecione</option>';
+            pacientes.forEach(p => modalSelect.innerHTML += `<option value="${p.id}">${p.nome}</option>`);
+        }
+    }
+    
+    function atualizarStats() {
+        document.getElementById("statMedicos").innerText = medicos.length;
+        document.getElementById("statPacientes").innerText = pacientes.length;
+        document.getElementById("statConsultas").innerText = consultas.length;
+    }
+    
+    function adicionarPaciente() {
+        let nome = prompt("Nome completo do paciente:");
+        if (!nome) return;
+        let telefone = prompt("Telefone (opcional):") || "";
+        const hoje = new Date().toISOString().slice(0,10);
+        pacientes.push({ id: nextPacienteId++, nome: nome.trim(), telefone, dataCadastro: hoje });
+        renderAll();
+        alert("Paciente cadastrado com sucesso!");
+    }
+    
+    function adicionarMedico() {
+        let nome = prompt("Nome do médico:");
+        if (!nome) return;
+        let especialidade = prompt("Especialidade:");
+        if (!especialidade) return;
+        let crm = prompt("CRM:");
+        medicos.push({ id: nextMedicoId++, nome: nome.trim(), especialidade: especialidade.trim(), crm: crm || "CRM-XX 00000" });
+        renderAll();
+        alert("Médico cadastrado!");
+    }
+    
+    function abrirModalHistorico() {
+        const modal = document.getElementById("modalHistorico");
+        popularSelects();
+        document.getElementById("modalDataHistorico").value = new Date().toISOString().slice(0,10);
+        document.getElementById("modalDescricao").value = "";
+        modal.style.display = "flex";
+    }
+    
+    function initTabs() {
+        const btns = document.querySelectorAll(".tab-btn");
+        const panes = document.querySelectorAll(".tab-pane");
+        btns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const tabId = btn.getAttribute("data-tab");
+                btns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                panes.forEach(pane => pane.classList.remove("active-pane"));
+                document.getElementById(tabId).classList.add("active-pane");
+            });
+        });
+    }
+    
+    // Eventos
+    document.getElementById("btnAgendarConsulta")?.addEventListener("click", agendarConsulta);
+    document.getElementById("btnAddPaciente")?.addEventListener("click", adicionarPaciente);
+    document.getElementById("btnAddMedico")?.addEventListener("click", adicionarMedico);
+    document.getElementById("btnNovoHistorico")?.addEventListener("click", abrirModalHistorico);
+    document.getElementById("btnVerHistorico")?.addEventListener("click", () => {
+        const select = document.getElementById("selectPacienteHistorico");
+        const pacienteId = parseInt(select.value);
+        if (!pacienteId) { alert("Selecione um paciente"); return; }
+        pacienteHistoricoAtual = pacienteId;
+        renderHistorico();
+    });
+    document.getElementById("btnEnviarMensagem")?.addEventListener("click", () => {
+        const input = document.getElementById("chatInput");
+        const texto = input.value.trim();
+        if (!texto) return;
+        addUserMessage(texto);
+        input.value = "";
+    });
+    document.getElementById("chatInput")?.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            const texto = e.target.value.trim();
+            if (texto) {
+                addUserMessage(texto);
+                e.target.value = "";
+            }
+        }
+    });
+    document.getElementById("btnSalvarHistorico")?.addEventListener("click", () => {
+        const pacienteId = document.getElementById("modalPacienteSelect").value;
+        const data = document.getElementById("modalDataHistorico").value;
+        const descricao = document.getElementById("modalDescricao").value.trim();
+        if (!pacienteId || !data || !descricao) { alert("Preencha todos os campos."); return; }
+        salvarNovoHistorico(pacienteId, data, descricao);
+        document.getElementById("modalHistorico").style.display = "none";
+        renderAll();
+        alert("Registro salvo no prontuário!");
+    });
+    document.getElementById("btnFecharModal")?.addEventListener("click", () => {
+        document.getElementById("modalHistorico").style.display = "none";
+    });
+    
+    // Inicialização
+    initTabs();
+    renderAll();
+    renderChat();
+</script>
+</body>
+</html>
